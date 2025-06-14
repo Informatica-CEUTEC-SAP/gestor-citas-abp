@@ -37,5 +37,11 @@ function configureRoutes() {
         iconClass: 'fas fa-user-tie',
         layout: eLayoutType.application
       },
+      {
+        path: '/citas',
+        name: '::Appointments',
+        iconClass: 'fas fa-book',
+        layout: eLayoutType.application,
+      },
   ]);
 }
