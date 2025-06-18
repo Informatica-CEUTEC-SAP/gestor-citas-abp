@@ -29,7 +29,7 @@ function configureRoutes() {
         name: '::Menu:Clients',
         iconClass: 'fas fa-user',
         layout: eLayoutType.application,
-        requiredPolicy: 'Citas.Clientes',
+        requiredPolicy: 'Citas.Clients',
       },
       {
         path: '/profesionales',
