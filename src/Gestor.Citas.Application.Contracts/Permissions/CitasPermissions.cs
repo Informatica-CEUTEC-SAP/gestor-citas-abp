@@ -4,11 +4,9 @@ public static class CitasPermissions
 {
     public const string GroupName = "Citas";
 
-
-
-    //Add your own permission names. Example:
-    //public const string MyPermission1 = GroupName + ".MyPermission1";
     
+    public const string Agenda = GroupName + ".Agenda";
+
     public static class Clientes
     {
         public const string Default = GroupName + ".Clientes";
@@ -16,6 +14,7 @@ public static class CitasPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+
     public static class Profesionales
     {
         public const string Default = GroupName + ".Profesionales";
@@ -23,7 +22,7 @@ public static class CitasPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
-    
+
     public static class Citas
     {
         public const string Default = GroupName + ".Citas";
