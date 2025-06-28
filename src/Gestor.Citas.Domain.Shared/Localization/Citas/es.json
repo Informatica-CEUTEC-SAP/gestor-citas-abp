@@ -68,6 +68,11 @@
     "Permission:Professionals.Edit": "Editar los profesionales",
     "Permission:Professionals.Delete": "Eliminar los profesionales",
 
+    "Permission:Agenda": "Agenda de Citas",
+    "Permission:Clients": "Gestión de clientes",
+    "Permission:Professionals": "Gestión de profesionales",
+    "Permission:Appointments": "Gestión de citas",
+
     "Client:NewClient": "Nuevo cliente",
     "Client:Name": "Nombre",
     "Client:Surname": "Apellido",

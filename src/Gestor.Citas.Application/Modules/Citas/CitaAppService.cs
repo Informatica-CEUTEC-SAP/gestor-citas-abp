@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq.Dynamic.Core;
 using Gestor.Citas.Modules.CitasDto;
 using Gestor.Citas.Modules.Clientes;
@@ -10,7 +11,8 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Gestor.Citas.Permissions;
 using Volo.Abp.Application.Dtos;
-using Volo.Abp.Domain.Entities; // Add this line or update with the correct namespace
+using Volo.Abp.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Gestor.Citas.Modules.Citas;
 
@@ -45,7 +47,6 @@ public class CitaAppService : CrudAppService<
         var clienteQueryable = await _clienteRepository.GetQueryableAsync();
         var profesionalQueryable = await _profesionalRepository.GetQueryableAsync();
 
-        //Include related entities if necessary
         var query = from cita in citaQueryable
                     join cliente in clienteQueryable on cita.ClienteId equals cliente.Id
                     join profesional in profesionalQueryable on cita.ProfesionalId equals profesional.Id
@@ -57,7 +58,6 @@ public class CitaAppService : CrudAppService<
                         Profesional = profesional
                     };
 
-        //Execute the query and get the cita with cliente and profesional
         var queryResult = await AsyncExecuter.FirstOrDefaultAsync(query);
         if (queryResult == null)
         {
@@ -110,7 +110,6 @@ public class CitaAppService : CrudAppService<
                 });
         }
 
-        //PagingAndSorting
         var validProperties = typeof(Cita.Cita).GetProperties()
             .Select(p => p.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -141,5 +140,73 @@ public class CitaAppService : CrudAppService<
             totalCount,
             citaDtos
         );
+    }
+
+    /// <summary>
+    /// Devuelve todas las citas de un profesional específico.
+    /// </summary>
+    [Authorize(CitasPermissions.Citas.Default)]
+    public async Task<List<CitaDto>> GetCitasPorProfesionalAsync(Guid profesionalId)
+    {
+        var citaQueryable = await Repository.GetQueryableAsync();
+        var clienteQueryable = await _clienteRepository.GetQueryableAsync();
+        var profesionalQueryable = await _profesionalRepository.GetQueryableAsync();
+
+        var query = from cita in citaQueryable
+                    where cita.ProfesionalId == profesionalId
+                    join cliente in clienteQueryable on cita.ClienteId equals cliente.Id
+                    join profesional in profesionalQueryable on cita.ProfesionalId equals profesional.Id
+                    select new
+                    {
+                        Cita = cita,
+                        Cliente = cliente,
+                        Profesional = profesional
+                    };
+
+        var queryResult = await AsyncExecuter.ToListAsync(query);
+
+        return queryResult.Select(x =>
+        {
+            var citaDto = ObjectMapper.Map<Cita.Cita, CitaDto>(x.Cita);
+            citaDto.Cliente = ObjectMapper.Map<Cliente, ClienteDto>(x.Cliente);
+            citaDto.Profesional = ObjectMapper.Map<Profesional, ProfesionalDto>(x.Profesional);
+            return citaDto;
+        }).ToList();
+    }
+
+    /// <summary>
+    /// Devuelve todas las citas, agrupadas por profesional (solo para administrador).
+    /// </summary>
+    [Authorize(CitasPermissions.Citas.Default)]
+    public async Task<Dictionary<ProfesionalDto, List<CitaDto>>> GetCitasPorTodosProfesionalesAsync()
+    {
+        var citaQueryable = await Repository.GetQueryableAsync();
+        var clienteQueryable = await _clienteRepository.GetQueryableAsync();
+        var profesionalQueryable = await _profesionalRepository.GetQueryableAsync();
+
+        var query = from cita in citaQueryable
+                    join cliente in clienteQueryable on cita.ClienteId equals cliente.Id
+                    join profesional in profesionalQueryable on cita.ProfesionalId equals profesional.Id
+                    select new
+                    {
+                        Cita = cita,
+                        Cliente = cliente,
+                        Profesional = profesional
+                    };
+
+        var queryResult = await AsyncExecuter.ToListAsync(query);
+
+        return queryResult
+            .GroupBy(x => x.Profesional)
+            .ToDictionary(
+                g => ObjectMapper.Map<Profesional, ProfesionalDto>(g.Key),
+                g => g.Select(x =>
+                {
+                    var citaDto = ObjectMapper.Map<Cita.Cita, CitaDto>(x.Cita);
+                    citaDto.Cliente = ObjectMapper.Map<Cliente, ClienteDto>(x.Cliente);
+                    citaDto.Profesional = ObjectMapper.Map<Profesional, ProfesionalDto>(x.Profesional);
+                    return citaDto;
+                }).ToList()
+            );
     }
 }

@@ -1,0 +1,22 @@
+<!-- Para profesional -->
+<div *ngIf="!modoAdmin">
+  <h3>Mis citas</h3>
+  <ul>
+    <li *ngFor="let cita of citas">
+      {{ cita.fechaCita | date:'short' }} - Cliente: {{ cita.cliente?.nombre }} - Estado: {{ cita.estado }}
+    </li>
+  </ul>
+</div>
+
+<!-- Para administrador -->
+<div *ngIf="modoAdmin">
+  <h3>Agenda de todos los profesionales</h3>
+  <div *ngFor="let entry of citasPorProfesional | keyvalue">
+    <h4>Profesional: {{ entry.key }}</h4>
+    <ul>
+      <li *ngFor="let cita of entry.value">
+        {{ cita.fechaCita | date:'short' }} - Cliente: {{ cita.cliente?.nombre }} - Estado: {{ cita.estado }}
+      </li>
+    </ul>
+  </div>
+</div>
