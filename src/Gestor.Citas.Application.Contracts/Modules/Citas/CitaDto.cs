@@ -15,4 +15,7 @@ public class CitaDto : AuditedEntityDto<Guid>
     public ClienteDto Cliente { get; set; }
     
     public ProfesionalDto Profesional { get; set; }
+    
+    public TimeSpan HoraInicio { get; set; }
+    public TimeSpan HoraFin { get; set; }
 }

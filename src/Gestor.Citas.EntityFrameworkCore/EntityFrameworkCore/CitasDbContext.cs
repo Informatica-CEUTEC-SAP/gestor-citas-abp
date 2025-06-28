@@ -108,6 +108,8 @@ public class CitasDbContext :
             b.HasIndex(hl => new { hl.ProfesionalId, hl.DayOfWeekSemana });
         });
         
+        
+        
         //builder.Entity<YourEntity>(b =>
         //{
         //    b.ToTable(CitasConsts.DbTablePrefix + "YourEntities", CitasConsts.DbSchema);

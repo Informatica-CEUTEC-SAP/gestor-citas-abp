@@ -22,6 +22,10 @@ public class CitasConfiguration : IEntityTypeConfiguration<Cita>
             .WithMany()
             .HasForeignKey("ClienteId")
             .IsRequired();
+        builder.HasIndex(x => x.FechaCita).IsUnique();
+        builder.HasIndex(x => x.ProfesionalId);
+        builder.HasIndex(x => x.ClienteId);
+        
 
     }
 }

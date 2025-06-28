@@ -55,6 +55,9 @@ namespace Gestor.Citas.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
 
+                    b.Property<byte>("Estado")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("text")
@@ -62,6 +65,12 @@ namespace Gestor.Citas.Migrations
 
                     b.Property<DateTime>("FechaCita")
                         .HasColumnType("date");
+
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("interval");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("interval");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -77,17 +86,32 @@ namespace Gestor.Citas.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<byte>("Modalidad")
+                        .HasColumnType("smallint");
+
                     b.Property<string>("Motivo")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
+                    b.Property<string>("NotasInternas")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ObservacionesCliente")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("ProfesionalId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Ubicacion")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId");
+
+                    b.HasIndex("FechaCita")
+                        .IsUnique();
 
                     b.HasIndex("ProfesionalId");
 
