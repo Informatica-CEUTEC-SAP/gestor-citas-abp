@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h5 class="modal-title">Crear Horario Laboral</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="form">
+    <div class="mb-3">
+      <label>Día de la semana</label>
+      <select class="form-select" formControlName="dayOfWeekSemana">
+        <option *ngFor="let d of diasSemana" [value]="d.value">{{ d.label }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Hora de Inicio</label>
+      <input type="time" class="form-control" formControlName="horaInicio" />
+    </div>
+
+    <div class="mb-3">
+      <label>Hora de Fin</label>
+      <input type="time" class="form-control" formControlName="horaFin" />
+    </div>
+
+    <div class="form-check mb-3">
+      <input type="checkbox" class="form-check-input" formControlName="estaActivo" />
+      <label class="form-check-label">Activo</label>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+  <button class="btn btn-primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
+</div>

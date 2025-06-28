@@ -4,6 +4,11 @@ import { ProfesionalDto, ProfesionalService } from '../proxy/modules/profesional
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbDateNativeAdapter, NgbDateAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { Confirmation, ConfirmationService } from '@abp/ng.theme.shared';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CrearHorarioModalComponent } from './Components/crear-horario-modal.component';
+
+
+
 
 @Component({
   selector: 'app-profesionales',
@@ -26,8 +31,20 @@ export class ProfesionalesComponent implements OnInit {
     public readonly list: ListService,
     private profesionalService: ProfesionalService,
     private fb: FormBuilder,
-    private confirmation: ConfirmationService
+    private confirmation: ConfirmationService,
+    private modalService: NgbModal
+
   ) {}
+
+  openCrearHorarioModal(profesionalId: string) {
+  const modalRef = this.modalService.open(CrearHorarioModalComponent, { size: 'lg' });
+  modalRef.componentInstance.profesionalId = profesionalId;
+
+  modalRef.result.then(
+    () => this.list.get(),
+    () => {}
+  );
+}
 
   ngOnInit() {
     const profesionalStreamCreator = (query) => this.profesionalService.getList(query);
@@ -90,4 +107,5 @@ export class ProfesionalesComponent implements OnInit {
       this.list.get();
     });
   }
+  
 }
