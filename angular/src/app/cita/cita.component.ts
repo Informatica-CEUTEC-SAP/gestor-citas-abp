@@ -63,6 +63,8 @@ export class CitaComponent implements OnInit {
       }));
     });
   }
+
+  
   
 
   createCita() {
@@ -87,26 +89,49 @@ export class CitaComponent implements OnInit {
 
   buildForm() {
     this.form = this.fb.group({
-      clienteId: [this.selectedCita?.clienteId ?? null, Validators.required],
-      profesionalId: [this.selectedCita?.profesionalId ?? null, Validators.required],
-      fechaCita: [this.selectedCita?.fechaCita ? new Date(this.selectedCita?.fechaCita): null, Validators.required],
-      motivo: [this.selectedCita?.motivo ?? null, Validators.required],
+      clienteId: [this.selectedCita.clienteId ?? null, Validators.required],
+      profesionalId: [this.selectedCita.profesionalId ?? null, Validators.required],
+      fechaCita: [this.selectedCita.fechaCita ?? null, Validators.required],
+      horaInicio: [this.selectedCita.horaInicio ?? '', Validators.required],
+      horaFin: [this.selectedCita.horaFin ?? '', Validators.required],
+      motivo: [this.selectedCita.motivo ?? '', Validators.required],
+      estado: [this.selectedCita.estado ?? 1],
+      ubicacion: [this.selectedCita.ubicacion ?? ''],
+      modalidad: [this.selectedCita.modalidad ?? 1],
+      notasInternas: [this.selectedCita.notasInternas ?? ''],
+      observacionesCliente: [this.selectedCita.observacionesCliente ?? '']
     });
   }
 
-  save() {
-    if (this.form.invalid) {
-      return;
-    }
+  
 
-    const request = this.selectedCita && this.selectedCita.id
-      ? this.citaService.update(this.selectedCita.id, this.form.value)
-      : this.citaService.create(this.form.value);
+save() {
+  if (this.form.invalid) return;
 
-    request.subscribe(() => {
+  const dto = this.form.value;
+
+  const request = this.selectedCita.id
+    ? this.citaService.update(this.selectedCita.id, dto)
+    : this.citaService.create(dto);
+
+  request.subscribe({
+    next: () => {
       this.isModalOpen = false;
-      this.form.reset();
-      this.list.get();
-    });
-  }
+      this.load(); // recarga las citas
+    },
+    error: (err) => {
+      if (err.error?.error?.code === 'CitaConflicto') {
+        alert(err.error?.error?.message || 'Ya hay una cita en ese horario.');
+      } else {
+        console.error(err);
+        alert('Error al guardar cita');
+      }
+    }
+  });
+}
+
+load() {
+  this.list.get();
+}
+  
 }

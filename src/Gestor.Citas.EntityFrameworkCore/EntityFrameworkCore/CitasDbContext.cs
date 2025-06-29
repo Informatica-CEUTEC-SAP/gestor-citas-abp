@@ -3,6 +3,7 @@ using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Gestor.Citas.Configurations;
 using Gestor.Citas.Modules.Cita;
 using Gestor.Citas.Modules.Clientes;
+using Gestor.Citas.Modules.Horarios;
 using Gestor.Citas.Modules.Profesionales;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.BlobStoring.Database.EntityFrameworkCore;
@@ -34,6 +35,8 @@ public class CitasDbContext :
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Profesional> Profesionales { get; set; }
     public DbSet<Cita> Citas { get; set; }
+    public DbSet<HorarioLaboral> HorariosLaborales { get; set; } 
+
 
     #region Entities from the modules
 
@@ -93,6 +96,19 @@ public class CitasDbContext :
         new ClientesConfiguration().Configure(builder.Entity<Cliente>());
         new ProfesionalesConfiguration().Configure(builder.Entity<Profesional>());
         new CitasConfiguration().Configure(builder.Entity<Cita>());
+        builder.Entity<HorarioLaboral>(b =>
+        {
+            b.ToTable(CitasConsts.DbTablePrefix + "HorariosLaborales", CitasConsts.DbSchema);
+            b.Property(x => x.DayOfWeekSemana).IsRequired();
+            b.Property(x => x.HoraInicio).IsRequired();
+            b.Property(x => x.HoraFin).IsRequired();
+            b.Property(x => x.EstaActivo).IsRequired();
+
+            
+            b.HasIndex(hl => new { hl.ProfesionalId, hl.DayOfWeekSemana });
+        });
+        
+        
         
         //builder.Entity<YourEntity>(b =>
         //{

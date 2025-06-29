@@ -28,6 +28,11 @@ public class CitasPermissionDefinitionProvider : PermissionDefinitionProvider
         citasPermission.AddChild(CitasPermissions.Citas.Create, L("Permission:Appointments.Create"));
         citasPermission.AddChild(CitasPermissions.Citas.Edit, L("Permission:Appointments.Edit"));
         citasPermission.AddChild(CitasPermissions.Citas.Delete, L("Permission:Appointments.Delete"));
+        
+        var horariosLaboralesPermission = myGroup.AddPermission(CitasPermissions.HorariosLaborales.Default, L("Permission:HorariosLaborales"));
+        horariosLaboralesPermission.AddChild(CitasPermissions.HorariosLaborales.Create, L("Permission:HorariosLaborales.Create"));
+        horariosLaboralesPermission.AddChild(CitasPermissions.HorariosLaborales.Edit, L("Permission:HorariosLaborales.Edit"));
+        horariosLaboralesPermission.AddChild(CitasPermissions.HorariosLaborales.Delete, L("Permission:HorariosLaborales.Delete"));
     }
 
     private static LocalizableString L(string name)

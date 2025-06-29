@@ -1,29 +1,19 @@
-import type { ClienteDto, CreateUpdateClienteDto } from './models';
+import type { CreateUpdateHorarioLaboralDto, HorarioLaboralDto } from './models';
 import { RestService, Rest } from '@abp/ng.core';
 import type { PagedAndSortedResultRequestDto, PagedResultDto } from '@abp/ng.core';
 import { Injectable } from '@angular/core';
-import type { CreateResponse } from '../common/models';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ClienteService {
+export class HorarioLaboralService {
   apiName = 'Default';
   
 
-  create = (input: CreateUpdateClienteDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ClienteDto>({
+  create = (input: CreateUpdateHorarioLaboralDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, HorarioLaboralDto>({
       method: 'POST',
-      url: '/api/app/cliente',
-      body: input,
-    },
-    { apiName: this.apiName,...config });
-  
-
-  createNew = (input: CreateUpdateClienteDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, CreateResponse>({
-      method: 'POST',
-      url: '/api/app/cliente/new',
+      url: '/api/app/horario-laboral',
       body: input,
     },
     { apiName: this.apiName,...config });
@@ -32,32 +22,40 @@ export class ClienteService {
   delete = (id: string, config?: Partial<Rest.Config>) =>
     this.restService.request<any, void>({
       method: 'DELETE',
-      url: `/api/app/cliente/${id}`,
+      url: `/api/app/horario-laboral/${id}`,
     },
     { apiName: this.apiName,...config });
   
 
   get = (id: string, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ClienteDto>({
+    this.restService.request<any, HorarioLaboralDto>({
       method: 'GET',
-      url: `/api/app/cliente/${id}`,
+      url: `/api/app/horario-laboral/${id}`,
     },
     { apiName: this.apiName,...config });
   
 
   getList = (input: PagedAndSortedResultRequestDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, PagedResultDto<ClienteDto>>({
+    this.restService.request<any, PagedResultDto<HorarioLaboralDto>>({
       method: 'GET',
-      url: '/api/app/cliente',
+      url: '/api/app/horario-laboral',
       params: { sorting: input.sorting, skipCount: input.skipCount, maxResultCount: input.maxResultCount },
     },
     { apiName: this.apiName,...config });
   
 
-  update = (id: string, input: CreateUpdateClienteDto, config?: Partial<Rest.Config>) =>
-    this.restService.request<any, ClienteDto>({
+  getListByProfesionalId = (profesionalId: string, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, HorarioLaboralDto[]>({
+      method: 'GET',
+      url: `/api/app/horario-laboral/by-profesional-id/${profesionalId}`,
+    },
+    { apiName: this.apiName,...config });
+  
+
+  update = (id: string, input: CreateUpdateHorarioLaboralDto, config?: Partial<Rest.Config>) =>
+    this.restService.request<any, HorarioLaboralDto>({
       method: 'PUT',
-      url: `/api/app/cliente/${id}`,
+      url: `/api/app/horario-laboral/${id}`,
       body: input,
     },
     { apiName: this.apiName,...config });

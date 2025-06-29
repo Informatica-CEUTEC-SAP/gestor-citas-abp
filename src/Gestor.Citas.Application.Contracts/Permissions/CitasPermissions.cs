@@ -31,4 +31,11 @@ public static class CitasPermissions
         public const string Edit = Default + ".Edit";
         public const string Delete = Default + ".Delete";
     }
+    public static class HorariosLaborales
+    {
+        public const string Default = GroupName + ".HorariosLaborales";
+        public const string Create = Default + ".Create";
+        public const string Edit = Default + ".Edit";
+        public const string Delete = Default + ".Delete";
+    }
 }

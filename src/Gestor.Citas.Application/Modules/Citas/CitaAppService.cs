@@ -9,6 +9,7 @@ using Gestor.Citas.Modules.Profesionales;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using Gestor.Citas.Permissions;
+using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities; // Add this line or update with the correct namespace
 
@@ -38,12 +39,33 @@ public class CitaAppService : CrudAppService<
         UpdatePolicyName = CitasPermissions.Citas.Edit;
         DeletePolicyName = CitasPermissions.Citas.Delete;
     }
+    
 
     public override async Task<CitaDto> GetAsync(Guid id)
     {
         var citaQueryable = await Repository.GetQueryableAsync();
         var clienteQueryable = await _clienteRepository.GetQueryableAsync();
         var profesionalQueryable = await _profesionalRepository.GetQueryableAsync();
+        
+        // First, get the cita entity by id
+        var citaEntity = await Repository.GetAsync(id);
+
+        var existeConflicto = await Repository.AnyAsync(c =>
+            c.Id != citaEntity.Id &&
+            c.ProfesionalId == citaEntity.ProfesionalId &&
+            c.FechaCita.Date == citaEntity.FechaCita.Date &&
+            (
+                (citaEntity.HoraInicio >= c.HoraInicio && citaEntity.HoraInicio < c.HoraFin) ||
+                (citaEntity.HoraFin > c.HoraInicio && citaEntity.HoraFin <= c.HoraFin) ||
+                (citaEntity.HoraInicio <= c.HoraInicio && citaEntity.HoraFin >= c.HoraFin)
+            )
+        );
+
+        if (existeConflicto)
+        {
+            throw new BusinessException("CitaConflicto")
+                .WithData("Mensaje", "El horario seleccionado ya está ocupado para ese profesional.");
+        }       
 
         //Include related entities if necessary
         var query = from cita in citaQueryable
@@ -141,5 +163,6 @@ public class CitaAppService : CrudAppService<
             totalCount,
             citaDtos
         );
+        
     }
 }

@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Gestor.Citas.Migrations
 {
     [DbContext(typeof(CitasDbContext))]
-    [Migration("20250612031429_addCitas")]
-    partial class addCitas
+    [Migration("20250626002457_addHorarioLaboralEntity")]
+    partial class addHorarioLaboralEntity
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,58 +26,6 @@ namespace Gestor.Citas.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Gestor.Citas.Books.Book", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("ConcurrencyStamp");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<string>("ExtraProperties")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("ExtraProperties");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("LastModifierId");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<DateTime>("PublishDate")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AppBooks", (string)null);
-                });
 
             modelBuilder.Entity("Gestor.Citas.Modules.Cita.Cita", b =>
                 {
@@ -222,6 +170,33 @@ namespace Gestor.Citas.Migrations
                         .HasDatabaseName("IX_Clientes_Nombre_Apellido");
 
                     b.ToTable("AppClientes", (string)null);
+                });
+
+            modelBuilder.Entity("Gestor.Citas.Modules.Horarios.HorarioLaboral", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<byte>("DayOfWeekSemana")
+                        .HasColumnType("smallint");
+
+                    b.Property<bool>("EstaActivo")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeSpan>("HoraFin")
+                        .HasColumnType("interval");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("interval");
+
+                    b.Property<Guid>("ProfesionalId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfesionalId", "DayOfWeekSemana");
+
+                    b.ToTable("AppHorariosLaborales", (string)null);
                 });
 
             modelBuilder.Entity("Gestor.Citas.Modules.Profesionales.Profesional", b =>
@@ -2136,6 +2111,17 @@ namespace Gestor.Citas.Migrations
                     b.Navigation("Profesional");
                 });
 
+            modelBuilder.Entity("Gestor.Citas.Modules.Horarios.HorarioLaboral", b =>
+                {
+                    b.HasOne("Gestor.Citas.Modules.Profesionales.Profesional", "Profesional")
+                        .WithMany("HorariosLaborales")
+                        .HasForeignKey("ProfesionalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profesional");
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>
                 {
                     b.HasOne("Volo.Abp.AuditLogging.AuditLog", null)
@@ -2285,6 +2271,11 @@ namespace Gestor.Citas.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestor.Citas.Modules.Profesionales.Profesional", b =>
+                {
+                    b.Navigation("HorariosLaborales");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
